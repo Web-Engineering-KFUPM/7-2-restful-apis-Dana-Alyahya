@@ -40,6 +40,7 @@ LAB SETUP INSTRUCTIONS
  *  =================================================================
  *  Steps:
  *    - Open the server/.env file
+ *
  *    - Write your db_username & db_password in the connection string.
  *    - If connection successful → console.log("Mongo connected").
  *    - If error → console.error("Connection error:", err.message)
@@ -159,8 +160,11 @@ import SongForm from "./components/SongForm.jsx";
 import SongTable from "./components/SongTable.jsx";
 import EditDialog from "./components/EditDialog.jsx";
 import {
-  apiGetSongs, apiGetSong,
-  apiCreateSong, apiUpdateSong, apiDeleteSong
+  apiGetSongs,
+  apiGetSong,
+  apiCreateSong,
+  apiUpdateSong,
+  apiDeleteSong,
 } from "./lib/api.js";
 import React from "react";
 
@@ -190,7 +194,9 @@ export default function App() {
     }
   };
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => {
+    load();
+  }, []);
 
   const onCreate = async (payload) => {
     setCreating(true);
@@ -219,7 +225,7 @@ export default function App() {
     setSaving(true);
     try {
       const upd = await apiUpdateSong(id, payload);
-      setSongs((arr) => arr.map(s => s.id === id ? upd : s));
+      setSongs((arr) => arr.map((s) => (s.id === id ? upd : s)));
       setEditingId(null);
       setEditingSong(null);
       showToast("Saved.");
@@ -234,14 +240,17 @@ export default function App() {
     if (!confirm("Delete this song?")) return;
     try {
       await apiDeleteSong(id);
-      setSongs((arr) => arr.filter(s => s.id !== id));
+      setSongs((arr) => arr.filter((s) => s.id !== id));
       showToast("Deleted.");
     } catch (e) {
       showToast(e.message, "error");
     }
   };
 
-  const editingOpen = useMemo(() => Boolean(editingId && editingSong), [editingId, editingSong]);
+  const editingOpen = useMemo(
+    () => Boolean(editingId && editingSong),
+    [editingId, editingSong]
+  );
 
   return (
     <div className="container">
@@ -255,7 +264,9 @@ export default function App() {
             </div>
           </div>
         </div>
-        <div className="badge">API: {import.meta.env.VITE_API_URL || "http://localhost:5174"}</div>
+        <div className="badge">
+          API: {import.meta.env.VITE_API_URL || "http://localhost:5174"}
+        </div>
       </div>
 
       <div className="grid">
@@ -265,7 +276,10 @@ export default function App() {
 
         <div className="card">
           {loading ? (
-            <div className="table-wrap" style={{ padding: 24, color: "#9fb1e8" }}>
+            <div
+              className="table-wrap"
+              style={{ padding: 24, color: "#9fb1e8" }}
+            >
               Loading songs…
             </div>
           ) : (
@@ -277,7 +291,10 @@ export default function App() {
       <EditDialog
         open={editingOpen}
         song={editingSong}
-        onClose={() => { setEditingId(null); setEditingSong(null); }}
+        onClose={() => {
+          setEditingId(null);
+          setEditingSong(null);
+        }}
         onSave={onSave}
         saving={saving}
       />
